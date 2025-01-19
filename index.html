@@ -38,6 +38,7 @@
       <div class="setting-input">
         <input type="checkbox" class="detailedSignSnapping" onclick="toggleSnapOnSigns('bottom')" checked/><label>snap on sign's bottom</label>
       </div>
+      <button onclick="saveImage()">Save your spell as PNG</button>
       <p>This site was created thanks to KonvaJS and <a href="https://witchhatatelier.telepedia.net/wiki/Witch_Hat_Atelier_Wiki" target="_blank">Independent Witch Hat Atelier Wiki</a></p>
     </div>
     <div>
@@ -169,7 +170,14 @@
   flex-wrap: wrap;
   justify-content: space-evenly;
   align-items: center;
-  height: inherit;
+  max-height: 96%;
+  padding: 10px;
+  align-content: flex-start;
+}
+
+.img-container img {
+  width: 25%;
+  height: 25%;
 }
   </style>
 </html>

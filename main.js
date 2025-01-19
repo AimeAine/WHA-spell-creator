@@ -632,3 +632,23 @@ function toggleSnapOnBody(permission) {
     availableCheckbox[0].disabled = true
   }
 }
+
+// function from https://stackoverflow.com/a/15832662/512042
+function downloadURI(uri, name) {
+  var link = document.createElement('a');
+  link.download = name;
+  link.href = uri;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  delete link;
+}
+
+function saveImage() {
+  var savedNodes = tr.nodes()
+  tr.nodes([])
+  circle.fill('white')
+  var dataURL = stage.toDataURL({ pixelRatio: 3 });
+  downloadURI(dataURL, 'stage.png');
+  tr.nodes(savedNodes)
+}
