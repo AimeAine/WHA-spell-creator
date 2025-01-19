@@ -1,6 +1,11 @@
 var height = window.innerHeight - 20;
 var GUIDELINE_OFFSET = 5;
 
+var snapOnCircle = true
+var snapOnSigil = 7
+var snapOnSign = 7
+var snapOnBody = 7
+
 var stage = new Konva.Stage({
   container: 'container',
   width: height,
@@ -26,7 +31,9 @@ backgroundLayer.add(circle);
 stage.add(backgroundLayer);
 stage.add(layer);
 stage.add(selectionLayer);
-var tr = new Konva.Transformer();
+var tr = new Konva.Transformer({
+  rotationSnaps: [0, 45, 90, 135, 180, 225, 270, 315],
+});
 layer.add(tr);
 
 function addSigilToScene(sigil) {
@@ -45,7 +52,7 @@ function addSigilToScene(sigil) {
     });
 
     darthNode.on('mouseover', function () {
-      document.body.style.cursor = 'pointer';
+        document.body.style.cursor = 'pointer';
     });
     darthNode.on('mouseout', function () {
       document.body.style.cursor = 'default';
@@ -53,6 +60,7 @@ function addSigilToScene(sigil) {
     layer.add(darthNode);
 
     tr.nodes([darthNode]);
+    console.log(darthNode.getClientRect(), tr.getClientRect())
   });
 }
 
@@ -72,7 +80,7 @@ function addSignToScene(sign) {
     });
 
     darthNode.on('mouseover', function () {
-      document.body.style.cursor = 'pointer';
+        document.body.style.cursor = 'pointer';
     });
     darthNode.on('mouseout', function () {
       document.body.style.cursor = 'default';
@@ -198,19 +206,66 @@ stage.on('click tap', function (e) {
 // were can we snap our objects?
 function getLineGuideStops(skipShape) {
   // we can snap to stage borders and the center of the stage
-  var vertical = [0, circle.width() / 2, circle.width()];
-  var horizontal = [0, circle.height() / 2, circle.height()];
+  var vertical = [];
+  var horizontal = [];
+  if (snapOnCircle) {
+    vertical.push([0, circle.width() / 2, circle.width()])
+    horizontal.push([0, circle.height() / 2, circle.height()])
+  }
 
   // and we snap over edges and center of each object on the canvas
-  stage.find('.sigil').forEach((guideItem) => {
-    if (guideItem === skipShape || tr.nodes().includes(guideItem)) {
-      return;
-    }
-    var box = guideItem.getClientRect();
-    // and we can snap to all edges of shapes
-    vertical.push([box.x, box.x + box.width, box.x + box.width / 2]);
-    horizontal.push([box.y, box.y + box.height, box.y + box.height / 2]);
-  });
+  if (snapOnSigil > 0) {
+    stage.find('.sigil').forEach((guideItem) => {
+      if (guideItem === skipShape || tr.nodes().includes(guideItem)) {
+        return;
+      }
+      var box = guideItem.getClientRect();
+      var localSnapOnSigil = snapOnSigil
+      // and we can snap to all edges of shapes
+      if (localSnapOnSigil >= 4) {
+        vertical.push(box.x + box.width / 2)
+        horizontal.push(box.y + box.height / 2)
+        localSnapOnSigil -= 4
+      }
+      if (localSnapOnSigil >= 2) {
+        vertical.push(box.x + box.width)
+        horizontal.push(box.y + box.height)
+        localSnapOnSigil -= 2
+      }
+      if (localSnapOnSigil >= 1) {
+        vertical.push(box.x)
+        horizontal.push(box.y)
+      }
+      // vertical.push([box.x, box.x + box.width, box.x + box.width / 2]);
+      // horizontal.push([box.y, box.y + box.height, box.y + box.height / 2]);
+    });
+  }
+  if (snapOnSign > 0) {
+    stage.find('.sign').forEach((guideItem) => {
+      if (guideItem === skipShape || tr.nodes().includes(guideItem)) {
+        return;
+      }
+      var box = guideItem.getClientRect();
+      var localSnapOnSign = snapOnSign
+      // and we can snap to all edges of shapes
+      if (localSnapOnSign >= 4) {
+        vertical.push(box.x + box.width / 2)
+        horizontal.push(box.y + box.height / 2)
+        localSnapOnSign -= 4
+      }
+      if (localSnapOnSign >= 2) {
+        vertical.push(box.x + box.width)
+        horizontal.push(box.y + box.height)
+        localSnapOnSign -= 2
+      }
+      if (localSnapOnSign >= 1) {
+        vertical.push(box.x)
+        horizontal.push(box.y)
+      }
+      // vertical.push([box.x, box.x + box.width, box.x + box.width / 2]);
+      // horizontal.push([box.y, box.y + box.height, box.y + box.height / 2]);
+    });
+  }
   return {
     vertical: vertical.flat(),
     horizontal: horizontal.flat(),
@@ -223,9 +278,65 @@ function getObjectSnappingEdges(node) {
   if (tr.nodes().length !== 0) {
     // box = tr.nodes()[0].getClientRect()
     box = tr.getClientRect()
-    // box.width -= 5
-    box.height += 50
+    box.width -= 5
+    box.x += 5
+    box.height -= 56
+    box.y += 56
   }
+  var vertical = []
+  var horizontal = []
+  var localBodySnapping = snapOnBody
+  if (localBodySnapping >= 4) {
+    vertical.push(
+      {
+        guide: Math.round(box.x + box.width / 2 - 2.5),
+        offset: Math.round(absPos.x - box.x - box.width / 2 + 2.5),
+        snap: 'center',
+      }
+    )
+    horizontal.push(
+      {
+        guide: Math.round(box.y + box.height / 2 - 2.95),
+        offset: Math.round(absPos.y - box.y - box.height / 2 + 2.95),
+        snap: 'center',
+      }
+    )
+    localBodySnapping -= 4
+  }
+  if (localBodySnapping >= 2) {
+    vertical.push({
+      guide: Math.round(box.x + box.width - 5),
+      offset: Math.round(absPos.x - box.x - box.width + 5),
+      snap: 'end',
+    })
+    horizontal.push({
+      guide: Math.round(box.y + box.height - 5),
+      offset: Math.round(absPos.y - box.y - box.height + 5),
+      snap: 'end',
+    })
+    localBodySnapping -= 2
+  }
+  if (localBodySnapping >= 1) {
+    vertical.push(
+      {
+        guide: Math.round(box.x),
+        offset: Math.round(absPos.x - box.x),
+        snap: 'start',
+      },
+    )
+    horizontal.push(
+      {
+        guide: Math.round(box.y),
+        offset: Math.round(absPos.y - box.y),
+        snap: 'start',
+      }
+    )
+  }
+  return {
+    vertical,
+    horizontal
+  }
+  
 
   return {
     vertical: [
@@ -398,3 +509,126 @@ layer.on('dragend', function (e) {
   // clear all previous lines on the screen
   layer.find('.guid-line').forEach((l) => l.destroy());
 });
+
+function toggleSnapOnCircle() {
+  snapOnCircle = !snapOnCircle
+}
+
+function toggleSnapOnSigils(permission) {
+  switch (permission) {
+    case "all":
+      if (snapOnSigil === 7) {
+        //uncheck all
+        snapOnSigil = 0
+        var checkbox = document.getElementsByClassName("detailedSigilSnapping");
+        for (var i = 0; i < checkbox.length; i++) {
+          checkbox[i].checked = false
+        }
+      } else {
+        snapOnSigil = 7
+        var checkbox = document.getElementsByClassName("detailedSigilSnapping");
+        for (var i = 0; i < checkbox.length; i++) {
+          checkbox[i].checked = true
+        }
+      }
+      break;
+    case "top":
+      if (snapOnSigil % 2 === 1) {
+        snapOnSigil -= 1
+      } else {
+        snapOnSigil += 1
+      }
+      break;
+    case "center":
+      if (snapOnSigil >= 4) {
+        snapOnSigil -= 4
+      } else {
+        snapOnSigil += 4
+      }
+      break
+    case "bottom":
+      if (snapOnSigil === 2 || snapOnSigil === 3 || snapOnSigil === 6 || snapOnSigil === 7) {
+        snapOnSigil -= 2
+      } else {
+        snapOnSigil += 2
+      }
+      break
+  }
+}
+function toggleSnapOnSigns(permission) {
+  switch (permission) {
+    case "all":
+      if (snapOnSign === 7) {
+        //uncheck all
+        snapOnSign = 0
+        var checkbox = document.getElementsByClassName("detailedSignSnapping");
+        for (var i = 0; i < checkbox.length; i++) {
+          checkbox[i].checked = false
+        }
+      } else {
+        snapOnSign = 7
+        var checkbox = document.getElementsByClassName("detailedSignSnapping");
+        for (var i = 0; i < checkbox.length; i++) {
+          checkbox[i].checked = true
+        }
+      }
+      break;
+    case "top":
+      if (snapOnSign % 2 === 1) {
+        snapOnSign -= 1
+      } else {
+        snapOnSign += 1
+      }
+      break;
+    case "center":
+      if (snapOnSign >= 4) {
+        snapOnSign -= 4
+      } else {
+        snapOnSign += 4
+      }
+      break
+    case "bottom":
+      if (snapOnSign === 2 || snapOnSign === 3 || snapOnSign === 6 || snapOnSign === 7) {
+        snapOnSign -= 2
+      } else {
+        snapOnSign += 2
+      }
+      break
+  }
+}
+
+// This one is a little different as we need to always have snapping point
+function toggleSnapOnBody(permission) {
+  switch (permission) {
+    case "top":
+      if (snapOnBody % 2 === 1) {
+        snapOnBody -= 1
+      } else {
+        snapOnBody += 1
+      }
+      break;
+    case "center":
+      if (snapOnBody >= 4) {
+        snapOnBody -= 4
+      } else {
+        snapOnBody += 4
+      }
+      break
+    case "bottom":
+      if (snapOnBody === 2 || snapOnBody === 3 || snapOnBody === 6 || snapOnBody === 7) {
+        snapOnBody -= 2
+      } else {
+        snapOnBody += 2
+      }
+      break
+  }
+  var checkbox = document.getElementsByClassName("detailedBodySnapping");
+  let availableCheckbox = []
+  for (var i = 0; i < checkbox.length; i++) {
+    if (checkbox[i].checked) availableCheckbox.push(checkbox[i])
+      checkbox[i].disabled = false
+  }
+  if (availableCheckbox.length === 1) {
+    availableCheckbox[0].disabled = true
+  }
+}

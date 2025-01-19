@@ -2,6 +2,44 @@
   <body>
     <div id="container"></div>
     <div>
+      <div class="setting-input">
+        <input type="checkbox" onclick="toggleSnapOnCircle()" checked/><label>snap on circle</label>
+      </div>
+      <div class="setting-input">
+        <input type="checkbox" class="detailedBodySnapping" onclick="toggleSnapOnBody('top')" checked/><label>snap on object top</label>
+      </div>
+      <div class="setting-input">
+        <input type="checkbox" class="detailedBodySnapping" onclick="toggleSnapOnBody('center')" checked/><label>snap on object center</label>
+      </div>
+      <div class="setting-input">
+        <input type="checkbox" class="detailedBodySnapping" onclick="toggleSnapOnBody('bottom')" checked/><label>snap on object bottom</label>
+      </div>
+      <div class="setting-input">
+        <input type="checkbox" onclick="toggleSnapOnSigils('all')" checked/><label>snap on sigils</label>
+      </div>
+      <div class="setting-input">
+        <input type="checkbox" class="detailedSigilSnapping" onclick="toggleSnapOnSigils('top')" checked/><label>snap on sigils's tops</label>
+      </div>
+      <div class="setting-input">
+        <input type="checkbox" class="detailedSigilSnapping" onclick="toggleSnapOnSigils('center')" checked/><label>snap on sigils's centers</label>
+      </div>
+      <div class="setting-input">
+        <input type="checkbox" class="detailedSigilSnapping" onclick="toggleSnapOnSigils('bottom')" checked/><label>snap on sigil's bottom</label>
+      </div>
+      <div class="setting-input">
+        <input type="checkbox" onclick="toggleSnapOnSigns('all')" checked/><label>snap on signs</label>
+      </div>
+      <div class="setting-input">
+        <input type="checkbox" class="detailedSignSnapping" onclick="toggleSnapOnSigns('top')" checked/><label>snap on signs's tops</label>
+      </div>
+      <div class="setting-input">
+        <input type="checkbox" class="detailedSignSnapping" onclick="toggleSnapOnSigns('center')" checked/><label>snap on signs's centers</label>
+      </div>
+      <div class="setting-input">
+        <input type="checkbox" class="detailedSignSnapping" onclick="toggleSnapOnSigns('bottom')" checked/><label>snap on sign's bottom</label>
+      </div>
+    </div>
+    <div>
       <ul class="menu__tabs">
         <li class="menu_tab"><a class="active" onclick="openTab(event, 'sigils')">Sigils</a></li>
         <li class="menu_tab"><a onclick="openTab(event, 'signs')">Signs</a></li>
@@ -44,6 +82,11 @@
       color: #31a687;
       font-weight: bold;
       text-decoration: none;
+    }
+
+    .setting-input {
+      display: flex;
+      align-items: center;
     }
 
 .menu__tabs {
