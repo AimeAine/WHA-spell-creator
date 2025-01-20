@@ -6,6 +6,8 @@ var snapOnSigil = 7
 var snapOnSign = 7
 var snapOnBody = 7
 
+var copyBuffer = null
+
 var stage = new Konva.Stage({
   container: 'container',
   width: height,
@@ -60,7 +62,6 @@ function addSigilToScene(sigil) {
     layer.add(darthNode);
 
     tr.nodes([darthNode]);
-    console.log(darthNode.getClientRect(), tr.getClientRect())
   });
 }
 
@@ -652,3 +653,38 @@ function saveImage() {
   downloadURI(dataURL, 'stage.png');
   tr.nodes(savedNodes)
 }
+
+function copyTransformer(cutIt) {
+  copyBuffer = []
+  tr.nodes().forEach((node) => {
+    copyBuffer.push(node.clone())
+    if (cutIt) node.destroy()
+  })
+  if (cutIt) tr.nodes([])
+}
+
+function pasteTransformer() {
+  console.log(copyBuffer)
+  copyBuffer.forEach((node) => {
+    layer.add(node)
+    node.move({
+      x: 5,
+      y: 5
+    })
+  })
+  tr.nodes(copyBuffer)
+}
+
+document.addEventListener('keydown', function (evt) {
+  evt = evt || window.event // IE support
+  var c = evt.key
+  var ctrlDown = evt.ctrlKey || evt.metaKey // Mac support
+
+  // do nothing
+  if (ctrlDown && evt.altKey) return
+
+  // Check for ctrl+c, v and x
+  if (ctrlDown && c == "c") copyTransformer(false)
+  else if (ctrlDown && c == "v") pasteTransformer() // v
+  else if (ctrlDown && c == "x")  copyTransformer(true)// x
+})
