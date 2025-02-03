@@ -38,7 +38,7 @@ var tr = new Konva.Transformer({
 });
 layer.add(tr);
 
-function addSigilToScene(sigil) {
+function addSigilToScene(sigil, extension = '.png') {
   Konva.Image.fromURL('./assets/sigils/' + sigil + '.png', function (darthNode) {
     darthNode.setAttrs({
       x: 200,
@@ -66,7 +66,7 @@ function addSigilToScene(sigil) {
 }
 
 function addSignToScene(sign) {
-  Konva.Image.fromURL('./assets/signs/' + sign + '.png', function (darthNode) {
+  Konva.Image.fromURL('./assets/signs/' + sign + '.svg', function (darthNode) {
     darthNode.setAttrs({
       x: 200,
       y: 50,
