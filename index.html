@@ -38,6 +38,9 @@
       <div class="setting-input">
         <input type="checkbox" class="detailedSignSnapping" onclick="toggleSnapOnSigns('bottom')" checked/><label>snap on sign's bottom</label>
       </div>
+      <div class="slidecontainer">
+        <input type="range" min="1" max="360" value="320" class="slider" oninput="changeCircleFill(event)">
+      </div>
       <button onclick="saveImage()">Save your spell as PNG</button>
       <p>This site was created thanks to KonvaJS and <a href="https://witchhatatelier.telepedia.net/wiki/Witch_Hat_Atelier_Wiki" target="_blank">Independent Witch Hat Atelier Wiki</a></p>
     </div>

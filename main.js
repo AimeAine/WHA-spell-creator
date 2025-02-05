@@ -19,12 +19,21 @@ var layer = new Konva.Layer();
 var selectionLayer = new Konva.Layer();
 
 // create our shape
-var circle = new Konva.Circle({
+// var circle = new Konva.Circle({
+//   x: stage.width() / 2,
+//   y: stage.height() / 2,
+//   radius: stage.height() / 2 - 5,
+//   stroke: 'black',
+//   strokeWidth: 4
+// });
+var circle = new Konva.Arc({
+  innerRadius:  stage.height() / 2 - 9,
+  outerRadius: stage.height() / 2 - 5,
+  fill: '#000',
+  angle: 320,
+  rotationDeg: 0,
   x: stage.width() / 2,
   y: stage.height() / 2,
-  radius: stage.height() / 2 - 5,
-  stroke: 'black',
-  strokeWidth: 4
 });
 // add the shape to the layer
 backgroundLayer.add(circle);
@@ -38,8 +47,8 @@ var tr = new Konva.Transformer({
 });
 layer.add(tr);
 
-function addSigilToScene(sigil, extension = '.png') {
-  Konva.Image.fromURL('./assets/sigils/' + sigil + '.png', function (darthNode) {
+function addSigilToScene(sigil) {
+  Konva.Image.fromURL('./assets/sigils/' + sigil + '.svg', function (darthNode) {
     darthNode.setAttrs({
       x: 200,
       y: 50,
@@ -633,7 +642,9 @@ function toggleSnapOnBody(permission) {
     availableCheckbox[0].disabled = true
   }
 }
-
+function changeCircleFill(event) {
+  circle.angle(event.target.value)
+}
 // function from https://stackoverflow.com/a/15832662/512042
 function downloadURI(uri, name) {
   var link = document.createElement('a');
