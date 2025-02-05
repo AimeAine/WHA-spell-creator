@@ -17,15 +17,6 @@ var backgroundLayer = new Konva.Layer()
 // then create layer
 var layer = new Konva.Layer();
 var selectionLayer = new Konva.Layer();
-
-// create our shape
-// var circle = new Konva.Circle({
-//   x: stage.width() / 2,
-//   y: stage.height() / 2,
-//   radius: stage.height() / 2 - 5,
-//   stroke: 'black',
-//   strokeWidth: 4
-// });
 var circle = new Konva.Arc({
   innerRadius:  stage.height() / 2 - 9,
   outerRadius: stage.height() / 2 - 5,
@@ -192,12 +183,14 @@ stage.on('click tap', function (e) {
   // do we pressed shift or ctrl?
   const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
   const isSelected = tr.nodes().indexOf(e.target) >= 0;
-
   if (!metaPressed && !isSelected) {
     // if no key pressed and the node is not selected
     // select just one
     tr.nodes([e.target]);
-  } else if (metaPressed && isSelected) {
+  } else if (!metaPressed && isSelected) {
+    tr.nodes([e.target]);
+  }
+  else if (metaPressed && isSelected) {
     // if we pressed keys and node was selected
     // we need to remove it from selection:
     const nodes = tr.nodes().slice(); // use slice to have new copy of array
